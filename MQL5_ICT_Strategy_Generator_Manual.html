@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQL5 ICT Strategy Generator - User Manual</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #111827;
+            color: #d1d5db;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+        }
+        h1, h2, h3, h4 {
+            color: #67e8f9;
+            border-bottom: 1px solid #4b5563;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        h1 {
+            text-align: center;
+            border: none;
+            font-size: 2.5em;
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        ul, ol {
+            margin-bottom: 1rem;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        code {
+            background-color: #374151;
+            color: #e5e7eb;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .disclaimer {
+            background-color: #4b5563;
+            border-left: 4px solid #f87171;
+            padding: 1rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+        .section {
+            margin-bottom: 2rem;
+        }
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .parameter-table th, .parameter-table td {
+            text-align: left;
+            padding: 0.8rem;
+            border: 1px solid #4b5563;
+        }
+        .parameter-table th {
+            background-color: #374151;
+            color: #9ca3af;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.9em;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Manual</h1>
+        <p style="text-align: center; font-style: italic;">MQL5 ICT Strategy Generator</p>
+
+        <div class="section" id="introduction">
+            <h2>1. Introduction</h2>
+            <p>Welcome to the MQL5 ICT Strategy Generator. This tool allows you to create a customized, ready-to-use Expert Advisor (EA) for MetaTrader 5 based on an advanced Inner Circle Trader (ICT) methodology.</p>
+            <p>This manual will guide you through the strategy, the generator's interface, and the steps required to deploy and run the EA on your trading platform.</p>
+            <div class="disclaimer">
+                <strong>Disclaimer:</strong> The generated MQL5 code is provided for educational and research purposes only. Trading foreign exchange on margin carries a high level of risk and may not be suitable for all investors. Always perform thorough backtesting and forward testing on a demo account before risking real capital.
+            </div>
+        </div>
+
+        <div class="section" id="strategy">
+            <h2>2. The Trading Strategy Explained</h2>
+            <p>The core of this EA is the <strong>London Session Liquidity Sweep</strong> with a <strong>Change in State of Delivery (CISD)</strong> entry model. It's designed to capitalize on institutional order flow during the high-volume London Killzone.</p>
+            
+            <h4>Key Concepts</h4>
+            <ul>
+                <li><strong>Asian Range:</strong> The high and low established during the relatively quiet Asian trading session. This range acts as a pool of liquidity.</li>
+                <li><strong>Liquidity Sweep:</strong> Price action that pushes above the Asian high or below the Asian low, triggering stop-loss orders and attracting breakout traders. This is often an institutional maneuver to engineer liquidity.</li>
+                <li><strong>Change in State of Delivery (CISD):</strong> The critical confirmation signal. After a liquidity sweep, a CISD occurs when price aggressively reverses and breaks through a recent Fair Value Gap (FVG), signaling a potential shift in market direction. This broken FVG becomes an "Inversion FVG".</li>
+                <li><strong>Entry Points:</strong> After a CISD, the EA looks for a high-probability entry by waiting for a retracement into one of three zones: the Inversion FVG, a newly formed FVG, or a classic Order Block.</li>
+            </ul>
+
+            <h3>Bullish Scenario</h3>
+            <ol>
+                <li>Price sweeps <strong>below</strong> the Asian session low.</li>
+                <li>A bullish candle closes <strong>above</strong> a prior bearish FVG, confirming a bullish CISD.</li>
+                <li>The EA waits for price to retrace and enters a <strong>BUY</strong> trade at an Inversion FVG, a new bullish FVG, or a bullish Order Block.</li>
+                <li><strong>Stop Loss:</strong> Placed below the low of the entry structure (FVG or Order Block).</li>
+                <li><strong>Take Profit:</strong> Targets the Previous Day's High (PDH) or a fixed Risk:Reward ratio.</li>
+            </ol>
+
+            <h3>Bearish Scenario</h3>
+            <ol>
+                <li>Price sweeps <strong>above</strong> the Asian session high.</li>
+                <li>A bearish candle closes <strong>below</strong> a prior bullish FVG, confirming a bearish CISD.</li>
+                <li>The EA waits for price to retrace and enters a <strong>SELL</strong> trade at an Inversion FVG, a new bearish FVG, or a bearish Order Block.</li>
+                <li><strong>Stop Loss:</strong> Placed above the high of the entry structure (FVG or Order Block).</li>
+                <li><strong>Take Profit:</strong> Targets the Previous Day's Low (PDL) or a fixed Risk:Reward ratio.</li>
+            </ol>
+        </div>
+
+        <div class="section" id="generator-usage">
+            <h2>3. How to Use the Generator</h2>
+            <p>Using the web interface is a simple three-step process: Configure, Generate, and Copy.</p>
+            <ol>
+                <li><strong>Configure Trade Parameters:</strong> Adjust the settings on the left panel to match your trading plan and risk tolerance.</li>
+                <li><strong>Generate MQL5 Code:</strong> Click the "Generate MQL5 Expert Advisor" button. The AI will write the complete code based on your inputs.</li>
+                <li><strong>Copy Code:</strong> Once the code appears in the right-hand panel, click the "Copy Code" button.</li>
+            </ol>
+        </div>
+
+        <div class="section" id="deployment">
+            <h2>4. Deploying the EA in MetaTrader 5</h2>
+            <p>Follow these steps to get your generated EA running in MT5.</p>
+            <ol>
+                <li><strong>Open MetaEditor:</strong> In MT5, go to <code>Tools > MetaQuotes Language Editor</code> or press <code>F4</code>.</li>
+                <li><strong>Create New File:</strong> In MetaEditor, go to <code>File > New</code>. In the MQL5 Wizard, select <code>Expert Advisor (template)</code> and click Next.</li>
+                <li><strong>Name Your EA:</strong> Give it a name (e.g., <code>LondonICT_Strategy</code>) and click Finish.</li>
+                <li><strong>Paste the Code:</strong> A template file will open. Select all the text (<code>Ctrl+A</code>) and delete it. Then, paste your copied code (<code>Ctrl+V</code>).</li>
+                <li><strong>Compile the Code:</strong> Click the <code>Compile</code> button in the toolbar or press <code>F7</code>. You should see "0 error(s), 0 warning(s)" in the toolbox at the bottom.</li>
+                <li><strong>Attach to Chart:</strong> Go back to the MT5 terminal. In the "Navigator" window, find your EA under "Expert Advisors". You may need to right-click and "Refresh". Drag the EA onto the chart you wish to trade.</li>
+                <li><strong>Configure Inputs:</strong> In the pop-up window, review the "Inputs" tab. All the settings you chose in the generator are here, but you can tweak them. In the "Common" tab, ensure <strong>"Allow Algo Trading"</strong> is checked. Click OK.</li>
+                <li><strong>Activate Algo Trading:</strong> In the main MT5 toolbar, make sure the master "Algo Trading" button is enabled (green). The EA name will appear in the top-right of the chart with a green icon if it's running correctly.</li>
+            </ol>
+        </div>
+
+        <div class="section" id="ea-inputs">
+            <h2>5. Expert Advisor Inputs (In MT5)</h2>
+            <p>When you attach the EA to a chart, you can configure the following parameters in the "Inputs" tab.</p>
+            <table class="parameter-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>LotSize</code></td>
+                        <td>The fixed lot size for each trade. Set to 0 to use RiskPercentage instead.</td>
+                    </tr>
+                    <tr>
+                        <td><code>RiskPercentage</code></td>
+                        <td>The percentage of your account balance to risk per trade. Only active if LotSize is 0.</td>
+                    </tr>
+                    <tr>
+                        <td><code>AsianSession_Start_Hour</code></td>
+                        <td>The server hour when the Asian session begins.</td>
+                    </tr>
+                     <tr>
+                        <td><code>AsianSession_End_Hour</code></td>
+                        <td>The server hour when the Asian session ends.</td>
+                    </tr>
+                     <tr>
+                        <td><code>LondonSession_Start_Hour</code></td>
+                        <td>The server hour when the London Killzone begins (EA starts looking for trades).</td>
+                    </tr>
+                    <tr>
+                        <td><code>LondonSession_End_Hour</code></td>
+                        <td>The server hour when the London Killzone ends (EA stops looking for new trades).</td>
+                    </tr>
+                    <tr>
+                        <td><code>TakeProfit_Mode</code></td>
+                        <td>Method for setting the take profit: targeting PDH/PDL or a fixed Risk:Reward ratio.</td>
+                    </tr>
+                    <tr>
+                        <td><code>EnableDailyStopLoss</code></td>
+                        <td>If true, the EA will stop trading for the day after reaching MaxDailyLosses.</td>
+                    </tr>
+                    <tr>
+                        <td><code>MaxDailyLosses</code></td>
+                        <td>The number of losing trades allowed per day before the EA pauses.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TrailToBreakEven</code></td>
+                        <td>If true, moves the stop loss to the entry price once a certain profit is reached.</td>
+                    </tr>
+                    <tr>
+                        <td><code>BreakEvenRR</code></td>
+                        <td>The Risk:Reward ratio (e.g., 1.0 for 1:1) that must be hit to trigger the move to break-even.</td>
+                    </tr>
+                    <tr>
+                        <td><code>EnableTrailingStop</code></td>
+                        <td>If true, activates a dynamic trailing stop to lock in profits.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TrailingStopPips</code></td>
+                        <td>The distance in pips the stop loss will trail behind the current price.</td>
+                    </tr>
+                     <tr>
+                        <td><code>ShowSessionTimers</code></td>
+                        <td>If true, displays a countdown timer for trading sessions on the chart.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section" id="visuals">
+            <h2>6. On-Chart Visuals</h2>
+            <p>The EA draws several objects on the chart to help you visualize its logic:</p>
+            <ul>
+                <li><strong>Asian Range:</strong> A rectangle showing the high and low of the session.</li>
+                <li><strong>Entry Zones:</strong> Colored rectangles will appear when the EA identifies a valid FVG or Order Block for a potential trade.</li>
+                <li><strong>Pending SL/TP Lines:</strong> Dotted horizontal lines will show the calculated Stop Loss and Take Profit levels for a valid setup before entry.</li>
+                <li><strong>Session Timers:</strong> A label in the corner of the chart shows countdowns to the next session start or end time.</li>
+                <li><strong>Trade History:</strong> The EA automatically enables the MT5 setting to show your past trades directly on the chart.</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>This manual was generated by Gemini. Always backtest before use.</p>
+        </div>
+    </div>
+</body>
+</html>
+  
